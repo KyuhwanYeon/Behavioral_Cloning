@@ -12,6 +12,7 @@ import cv2
 import sklearn
 import matplotlib.pyplot as plt
 
+
 #%% Load data
 samples = [] #simple array to append all the entries present in the .csv file
 with open('./data/data/driving_log.csv') as csvfile: #currently after extracting the file is present in this path
@@ -21,6 +22,7 @@ with open('./data/data/driving_log.csv') as csvfile: #currently after extracting
         samples.append(line)
 
 # split dataset -> train:0.85, validation: 0.15
+
 train_samples, validation_samples = train_test_split(samples,test_size=0.15)
 #%% Data generation
 
@@ -69,9 +71,11 @@ def generator(samples, batch_size=32):
             
 
 # compile and train the model using the generator function
+
+
+
 train_generator = generator(train_samples, batch_size=32)
 validation_generator = generator(validation_samples, batch_size=32)
-
 
 
 #%% Model design
@@ -116,17 +120,32 @@ def NVIDIA_PILOT_NET():
     model.compile(loss='mse',optimizer='adam')
     return model
 
-#%%
+#%% Main
 if __name__ == '__main__':
     model = NVIDIA_PILOT_NET()
     history_object = model.fit_generator( train_generator, steps_per_epoch= len(train_samples), validation_data=validation_generator,   validation_steps=len(validation_samples), epochs=5, verbose=1)
-    model.fit(train_generator[0], train_generator[1])
+
     # save model
     model.save('model.h5')
     
     # print summary
     model.summary()
-
+    
+    # plot
+    ### print the keys contained in the history object
+    print(history_object.history.keys())
+    #%%
+    ### plot the training and validation loss for each epoch
+    plt.plot(history_object.history['loss'])
+    plt.plot(history_object.history['val_loss'])
+    plt.title('model mean squared error loss')
+    plt.ylabel('mean squared error loss')
+    plt.xlabel('epoch')
+    plt.legend(['training set', 'validation set'], loc='upper right')
+    plt.grid('on')
+    plt.savefig('img/loss.png')
+    plt.show()
+    
 
 
 
