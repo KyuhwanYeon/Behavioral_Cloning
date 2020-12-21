@@ -74,8 +74,8 @@ def generator(samples, batch_size=32):
 
 
 
-train_generator = generator(train_samples, batch_size=32)
-validation_generator = generator(validation_samples, batch_size=32)
+train_generator = generator(train_samples, batch_size=1)
+validation_generator = generator(validation_samples, batch_size=1)
 
 
 #%% Model design
